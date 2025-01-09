@@ -1,0 +1,232 @@
+html {
+    background: #000;
+    height: 100%;
+}
+
+/* 用于控制marquee的位置 */
+.marquee-container {
+    position: absolute;       /* 绝对定位 */
+    top: 50px;                /* 距离页面顶部20px */
+    left: 50%;                /* 水平居中 */
+    transform: translateX(-50%); /* 确保它居中 */
+    width: 100%;              /* 宽度为100% */
+    text-align: center;       /* 内容水平居中 */
+}
+
+/*最外层容器样式*/
+.wrap {
+    position: absolute;
+    top: 30%; /* 靠近顶部 */
+    left: -10%; /* 向左偏移 */
+    width: 300px;
+    height: 300px;
+}
+
+
+/*包裹所有容器样式*/
+.cube {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    transform-style: preserve-3d;
+    transform: rotateX(-30deg) rotateY(-80deg);
+    -webkit-animation: rotate 20s infinite;
+    animation-timing-function: linear;
+}
+
+@-webkit-keyframes rotate {
+    from {
+        transform: rotateX(0deg) rotateY(0deg);
+    }
+    to {
+        transform: rotateX(360deg) rotateY(360deg);
+    }
+}
+
+.cube div {
+    position: absolute;
+    width: 200px;
+    height: 200px;
+    opacity: 0.8;
+    transition: all .4s;
+}
+
+/*定义所有图片样式*/
+.pic {
+    width: 200px;
+    height: 200px;
+    cursor: pointer;
+}
+
+.cube .out_front {
+    transform: rotateY(0deg) translateZ(100px);
+}
+
+.cube .out_back {
+    transform: translateZ(-100px) rotateY(180deg);
+}
+
+.cube .out_left {
+    transform: rotateY(90deg) translateZ(100px);
+}
+
+.cube .out_right {
+    transform: rotateY(-90deg) translateZ(100px);
+}
+
+.cube .out_top {
+    transform: rotateX(90deg) translateZ(100px);
+}
+
+.cube .out_bottom {
+    transform: rotateX(-90deg) translateZ(100px);
+}
+
+.cube span {
+    display: block;
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 50px;
+    left: 50px;
+}
+
+.cube .in_pic {
+    width: 100px;
+    height: 100px;
+}
+
+/*定义小正方体样式*/
+.cube .in_front {
+    transform: rotateY(0deg) translateZ(50px);
+}
+
+.cube .in_back {
+    transform: translateZ(-50px) rotateY(180deg);
+}
+
+.cube .in_left {
+    transform: rotateY(90deg) translateZ(50px);
+}
+
+.cube .in_right {
+    transform: rotateY(-90deg) translateZ(50px);
+}
+
+.cube .in_top {
+    transform: rotateX(90deg) translateZ(50px);
+}
+
+.cube .in_bottom {
+    transform: rotateX(-90deg) translateZ(50px);
+}
+
+/*鼠标移入后样式*/
+.cube:hover .out_front {
+    transform: rotateY(0deg) translateZ(200px);
+}
+
+.cube:hover .out_back {
+    transform: translateZ(-200px) rotateY(180deg);
+}
+
+.cube:hover .out_left {
+    transform: rotateY(90deg) translateZ(200px);
+}
+
+.cube:hover .out_right {
+    transform: rotateY(-90deg) translateZ(200px);
+}
+
+.cube:hover .out_top {
+    transform: rotateX(90deg) translateZ(200px);
+}
+
+.cube:hover .out_bottom {
+    transform: rotateX(-90deg) translateZ(200px);
+}
+
+/* 放大图片或视频的弹出层样式 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal img,
+.modal video {
+    max-width: 80%;
+    max-height: 80%;
+    border: 3px solid white;
+}
+
+/* 左右切换按钮样式 */
+.nav-btn {
+    position: absolute;
+    top: 50%;
+    font-size: 40px;
+    color: white;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.left {
+    left: 20px;
+}
+
+.right {
+    right: 20px;
+}
+
+.nav-btn:hover {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+/* 新增：音乐控制面板 */
+.music-control {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+.music-control button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.music-control button:hover {
+    background-color: #45a049;
+}
+
+.music-control input[type="range"] {
+    width: 150px;
+    margin-right: 10px;
+}
+
+.music-control label {
+    font-size: 14px;
+    margin-right: 10px;
+}
+
+.music-control #play-status {
+    font-size: 14px;
+    margin-left: 10px;
+}

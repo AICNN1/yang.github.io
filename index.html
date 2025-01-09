@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洋洋的旋转相册</title>
+    <link rel="stylesheet" href="index.css" />
+    <audio id="background-music" loop="loop">
+        <source src="Trap.mp3" type="audio/mp3">
+    </audio>
+    <style>
+        html, body {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: url("img/13.jpg");
+            background-size: cover;
+        }
+        
+        /* 背景音乐控制面板 */
+        .music-control {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 10;
+        }
+
+        .music-control button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+
+        .music-control button:hover {
+            background-color: #45a049;
+        }
+
+        .music-control input[type="range"] {
+            width: 150px;
+            margin-right: 10px;
+        }
+
+        .music-control label {
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .music-control #play-status {
+            font-size: 14px;
+            margin-left: 10px;
+        }
+
+        /* 放大图片或视频的弹出层样式 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal img,
+        .modal video {
+            max-width: 80%;
+            max-height: 80%;
+            border: 3px solid white;
+        }
+
+        /* 左右切换按钮样式 */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            font-size: 40px;
+            color: white;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .left {
+            left: 20px;
+        }
+
+        .right {
+            right: 20px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(0, 0, 0, 0.9);
+        }
+
+        /* 相册样式 */
+        .wrap {
+            position: relative;
+            margin: auto;
+            width: 300px;
+            height: 300px;
+        }
+
+        .cube {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            transform-style: preserve-3d;
+            transform: rotateX(-30deg) rotateY(-80deg);
+            animation: rotate 20s infinite;
+            animation-timing-function: linear;
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotateX(0deg) rotateY(0deg);
+            }
+            to {
+                transform: rotateX(360deg) rotateY(360deg);
+            }
+        }
+
+        .cube div {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            opacity: 0.8;
+            transition: all .4s;
+        }
+
+        .pic {
+            width: 200px;
+            height: 200px;
+            cursor: pointer;
+        }
+
+        .cube .out_front {
+            transform: rotateY(0deg) translateZ(100px);
+        }
+
+        .cube .out_back {
+            transform: translateZ(-100px) rotateY(180deg);
+        }
+
+        .cube .out_left {
+            transform: rotateY(90deg) translateZ(100px);
+        }
+
+        .cube .out_right {
+            transform: rotateY(-90deg) translateZ(100px);
+        }
+
+        .cube .out_top {
+            transform: rotateX(90deg) translateZ(100px);
+        }
+
+        .cube .out_bottom {
+            transform: rotateX(-90deg) translateZ(100px);
+        }
+
+        .cube span {
+            display: block;
+            width: 100px;
+            height: 100px;
+            position: absolute;
+            top: 50px;
+            left: 50px;
+        }
+
+        .cube .in_pic {
+            width: 100px;
+            height: 100px;
+        }
+
+        .cube .in_front {
+            transform: rotateY(0deg) translateZ(50px);
+        }
+
+        .cube .in_back {
+            transform: translateZ(-50px) rotateY(180deg);
+        }
+
+        .cube .in_left {
+            transform: rotateY(90deg) translateZ(50px);
+        }
+
+        .cube .in_right {
+            transform: rotateY(-90deg) translateZ(50px);
+        }
+
+        .cube .in_top {
+            transform: rotateX(90deg) translateZ(50px);
+        }
+
+        .cube .in_bottom {
+            transform: rotateX(-90deg) translateZ(50px);
+        }
+
+        .cube:hover .out_front {
+            transform: rotateY(0deg) translateZ(200px);
+        }
+
+        .cube:hover .out_back {
+            transform: translateZ(-200px) rotateY(180deg);
+        }
+
+        .cube:hover .out_left {
+            transform: rotateY(90deg) translateZ(200px);
+        }
+
+        .cube:hover .out_right {
+            transform: rotateY(-90deg) translateZ(200px);
+        }
+
+        .cube:hover .out_top {
+            transform: rotateX(90deg) translateZ(200px);
+        }
+
+        .cube:hover .out_bottom {
+            transform: rotateX(-90deg) translateZ(200px);
+        }
+    </style>
+</head>
+<body>
+    <div class="music-control">
+        <button id="play-pause" onclick="togglePlayPause()">播放</button>
+        <input type="range" id="volume-control" min="0" max="1" step="0.01" value="0.5" onchange="changeVolume()">
+        <label for="volume-control">音量</label>
+        <span id="play-status">播放中</span>
+    </div>
+
+    <div class="wrap">
+        <div class="cube">
+            <div class="out_front">
+                <video src="img/1.mp4" class="pic" onclick="zoomMedia(this, 0)"></video>
+            </div>
+            <div class="out_back">
+                <img src="img/2.jpg" class="pic" onclick="zoomMedia(this, 1)">
+            </div>
+            <div class="out_left">
+                <img src="img/3.jpg" class="pic" onclick="zoomMedia(this, 2)">
+            </div>
+            <div class="out_right">
+                <img src="img/4.jpg" class="pic" onclick="zoomMedia(this, 3)">
+            </div>
+            <div class="out_top">
+                <img src="img/5.jpg" class="pic" onclick="zoomMedia(this, 4)">
+            </div>
+            <div class="out_bottom">
+                <img src="img/6.jpg" class="pic" onclick="zoomMedia(this, 5)">
+            </div>
+
+            <span class="in_front">
+                <img src="img/7.jpg" class="in_pic" onclick="zoomMedia(this, 6)" />
+            </span>
+            <span class="in_back">
+                <img src="img/8.jpg" class="in_pic" onclick="zoomMedia(this, 7)" />
+            </span>
+            <span class="in_left">
+                <img src="img/9.jpg" class="in_pic" onclick="zoomMedia(this, 8)" />
+            </span>
+            <span class="in_right">
+                <img src="img/10.jpg" class="in_pic" onclick="zoomMedia(this, 9)" />
+            </span>
+            <span class="in_top">
+                <img src="img/11.jpg" class="in_pic" onclick="zoomMedia(this, 10)" />
+            </span>
+            <span class="in_bottom">
+                <img src="img/12.jpg" class="in_pic" onclick="zoomMedia(this, 11)" />
+            </span>
+        </div>
+    </div>
+
+    <!-- 外部容器 -->
+<div class="marquee-container">
+    <marquee style="font-size:40px;color: yellowgreen;font-family:\6977\4F53_GB2312;">
+        你好呀，洋姐。 🎬咔 ！咔！咔！2024杀青啦 🧨2025开启以美好为主题的剧本🎉🎬凡是过往皆为序章，2024的所有烦恼与遗憾都已经过去了。愿我们在新的一年里拥抱梦想，远离烦恼，每天都有好心情。乘着2025的列车，向着美好的未来出发，未来皆为可盼。🫧
+
+    </marquee>
+</div>
+
+
+
+    <script>
+        window.onload = function () {
+            let oA = document.querySelector("#background-music");
+            let timer = null;
+
+            function autoPlay() {
+                if (oA.paused) {
+                    oA.paused = false;
+                    oA.volume = 0.5;
+                    oA.play();
+                } else {
+                    clearInterval(timer);
+                }
+            }
+
+            timer = setInterval(autoPlay, 1);
+        };
+
+        function zoomMedia(element, index) {
+            var modal = document.createElement("div");
+            modal.className = "modal";
+            var mediaElement;
+
+            if (element.tagName === "IMG") {
+                mediaElement = document.createElement("img");
+                mediaElement.src = element.src;
+            } else if (element.tagName === "VIDEO") {
+                mediaElement = document.createElement("video");
+                mediaElement.src = element.src;
+                mediaElement.controls = true;
+                mediaElement.autoplay = true;
+            }
+
+            modal.appendChild(mediaElement);
+
+            var prevBtn = document.createElement("div");
+            prevBtn.className = "nav-btn left";
+            prevBtn.innerText = "←";
+            prevBtn.onclick = function () {
+                changeMedia(index - 1);
+            };
+
+            var nextBtn = document.createElement("div");
+            nextBtn.className = "nav-btn right";
+            nextBtn.innerText = "→";
+            nextBtn.onclick = function () {
+                changeMedia(index + 1);
+            };
+
+            modal.appendChild(prevBtn);
+            modal.appendChild(nextBtn);
+
+            document.body.appendChild(modal);
+
+            modal.onclick = function (e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            };
+
+            function changeMedia(newIndex) {
+                if (newIndex < 0) newIndex = 11;
+                if (newIndex > 11) newIndex = 0;
+
+                const mediaItems = document.querySelectorAll('.pic, .in_pic, .out_front video');
+                zoomMedia(mediaItems[newIndex], newIndex);
+                modal.remove();
+            }
+        }
+
+        function togglePlayPause() {
+            var music = document.getElementById('background-music');
+            var playPauseButton = document.getElementById('play-pause');
+            var playStatus = document.getElementById('play-status');
+
+            if (music.paused) {
+                music.play();
+                playPauseButton.innerText = '暂停';
+                playStatus.innerText = '播放中';
+            } else {
+                music.pause();
+                playPauseButton.innerText = '播放';
+                playStatus.innerText = '暂停';
+            }
+        }
+
+        function changeVolume() {
+            var volumeControl = document.getElementById('volume-control');
+            var music = document.getElementById('background-music');
+            music.volume = volumeControl.value;
+        }
+    </script>
+</body>
+</html>
